@@ -1,0 +1,37 @@
+{
+  "folders": [
+    {
+      "name": "Frontend",
+      "path": "."
+    },
+    {
+      "name": "Backend",
+      "path": "backend"
+    },
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/backend": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "**/*.code-search": true
+    },
+    "files.watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/node_modules/*/**": true,
+      "**/.hg/store/**": true
+    }
+  },
+  "extensions": {
+    "recommendations": [    ]
+  }
+}
