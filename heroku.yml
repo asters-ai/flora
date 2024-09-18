@@ -1,3 +1,5 @@
 build:
+  config:
+    AUTOSSH_KEY: ${AUTOSSH_KEY}
   docker:
-    web: Dockerfile
+    web: Dockerfile.prod
