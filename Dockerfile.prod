@@ -22,7 +22,7 @@ FROM node:21-alpine3.19 as build
 ARG BUILD_HASH
 
 WORKDIR /app
-RUN apk update && apk add --no-cache openssh autossh
+
 
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -97,6 +97,7 @@ RUN chown -R $UID:$GID /app $HOME
 
 RUN if [ "$USE_OLLAMA" = "true" ]; then \
     apt-get update && \
+    apt-get install -y --no-install-recommends openssh autossh && \
     # Install pandoc and netcat
     apt-get install -y --no-install-recommends pandoc netcat-openbsd curl && \
     apt-get install -y --no-install-recommends gcc python3-dev && \
