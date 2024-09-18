@@ -34,17 +34,19 @@ services:
       context: .
       target: base
     command: ["bash", "dev.sh"]
+    depends_on:
+      - db
     env_file: ".env"
     environment:
      - ENV=dev
      - WEBUI_AUTH=False
+     - DATABASE_URL=postgresql://postgres:password!@db:5432/postgres
     volumes:
       - data:/app/backend/data
     extra_hosts:
       - host.docker.internal:host-gateway
     ports:
       - "8080:8080"
-    restart: always
     develop:
       watch:
         - action: sync
@@ -54,7 +56,25 @@ services:
             - backend/data
         - action: rebuild
           path: backend/requirements.txt
+  
+
+  db:
+    image: postgres:16-alpine
+    # set shared memory limit when using docker-compose
+    ports:
+      - 5432:5432
+    volumes:
+      - flora-pg:/var/lib/postgresql/data
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: password!
+
+  adminer:
+    image: adminer
+    ports:
+      - 3001:8080
 
 volumes:
+  flora-pg: {}
   data: {}
   ollama: {}

@@ -9,7 +9,7 @@ code:
 # Start the Docker Compose services
 up: 
     @echo "Starting Docker Compose..."
-    docker compose -f docker-compose.dev.yaml up -d --watch
+    docker compose -f docker-compose.dev.yaml up --watch
 
 # Stop the Docker Compose services
 down: 
