@@ -160,6 +160,7 @@ USER $UID:$GID
 ARG BUILD_HASH
 ENV WEBUI_BUILD_VERSION=${BUILD_HASH}
 
-RUN echo AUTOSSH_KEY > bastion.pem
+RUN echo $AUTOSSH_KEY > bastion.pem
+RUN chmod 600 bastion.pem
 
 CMD autossh -M 0 -fN -i bastion.pem -L 5432:asters-potgres.cfesffeqrn91.eu-central-1.rds.amazonaws.com:5432 ssh-bastion@infra.asters.ai && bash start.sh
