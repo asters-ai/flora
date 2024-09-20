@@ -53,6 +53,6 @@ jobs:
           docker tag $COMMIT_SHA latest
 
           # Push both tags (SHA and branch name) to ECR
-          docker push $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA
-          docker push $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:latest
+          docker push $REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA
+          docker push $REPOSITORY_NAME-$IMAGE_BRANCH:latest
 
