@@ -30,6 +30,14 @@ jobs:
       - name: Extract repository name
         run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
+
+      - name: Create ECR repository if not exists
+        run: |
+          aws ecr describe-repositories --repository-names "${{ env.REPO_NAME }}-${{ github.ref_name }}" || \
+          aws ecr create-repository --repository-name "${{ env.REPO_NAME }}-${{ github.ref_name }}" \
+          --image-scanning-configuration scanOnPush=true \
+          --encryption-configuration encryptionType=AES256
+
       # Build, tag, and push image to ECR
       - name: Build, tag, and push image to ECR
         env:
@@ -49,8 +57,3 @@ jobs:
           docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/$COMMIT_SHA
           docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/latest
 
-      # Optionally, verify that the images have been pushed successfully
-      - name: Verify pushed images
-        run: |
-          echo "Image $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/$COMMIT_SHA has been pushed to ECR"
-          echo "Image $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/latest has been pushed to ECR"
