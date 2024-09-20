@@ -47,11 +47,10 @@ jobs:
           IMAGE_BRANCH: ${{ github.ref_name }}
         run: |
           # Build the Docker image
-          docker build -t $REPOSITORY_NAME:$COMMIT_SHA .
+          docker build -t $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA .
 
           # Tag the image with both the branch name and the Git SHA
-          docker tag $REPOSITORY_NAME:$COMMIT_SHA $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA
-          docker tag $REPOSITORY_NAME:$COMMIT_SHA $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:latest
+          docker tag $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:latest
 
           # Push both tags (SHA and branch name) to ECR
           docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/$COMMIT_SHA
