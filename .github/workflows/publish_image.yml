@@ -47,7 +47,7 @@ jobs:
           IMAGE_BRANCH: ${{ github.ref_name }}
         run: |
           # Build the Docker image
-          docker build -t COMMIT_SHA .
+          docker build -t $COMMIT_SHA .
 
           # Tag the image with both the branch name and the Git SHA
           docker tag $COMMIT_SHA latest
