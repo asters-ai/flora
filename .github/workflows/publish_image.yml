@@ -38,21 +38,6 @@ jobs:
           --image-scanning-configuration scanOnPush=true \
           --encryption-configuration encryptionType=AES256
 
-    #   # Build, tag, and push image to ECR
-    #   - name: Build, tag, and push image to ECR
-    #     env:
-    #       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-    #       REPOSITORY_NAME: ${{ env.REPO_NAME }}
-    #       COMMIT_SHA: ${{ github.sha }}
-    #       IMAGE_BRANCH: ${{ github.ref_name }}
-    #     run: |
-    #       # Build the Docker image
-    #       docker build -t $REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA .
-
-    #       docker push $REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA
-    #       docker push $REPOSITORY_NAME-$IMAGE_BRANCH:latest
-
-        
       - run: docker build --tag ${{ env.REPO_NAME }}-${{ github.ref_name }}:${{ github.sha }} .
       - name: Push to ECR
         id: ecr
