@@ -38,28 +38,38 @@ jobs:
           --image-scanning-configuration scanOnPush=true \
           --encryption-configuration encryptionType=AES256
 
-      # Build, tag, and push image to ECR
-      - name: Build, tag, and push image to ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY_NAME: ${{ env.REPO_NAME }}
-          COMMIT_SHA: ${{ github.sha }}
-          IMAGE_BRANCH: ${{ github.ref_name }}
-        run: |
-          # Build the Docker image
-          docker build -t $REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA .
+    #   # Build, tag, and push image to ECR
+    #   - name: Build, tag, and push image to ECR
+    #     env:
+    #       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #       REPOSITORY_NAME: ${{ env.REPO_NAME }}
+    #       COMMIT_SHA: ${{ github.sha }}
+    #       IMAGE_BRANCH: ${{ github.ref_name }}
+    #     run: |
+    #       # Build the Docker image
+    #       docker build -t $REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA .
 
-          docker push $REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA
-          docker push $REPOSITORY_NAME-$IMAGE_BRANCH:latest
+    #       docker push $REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA
+    #       docker push $REPOSITORY_NAME-$IMAGE_BRANCH:latest
 
         
-    #   - run: docker build --tag ${{ env.REPO_NAME }}-${{ github.ref_name }}:${{ github.sha }} .
-    #   - name: Push to ECR
-    #     id: ecr
-    #     uses: jwalton/gh-ecr-push@v2
-    #     with:
-    #         access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #         secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #         region: eu-central-1
-    #         local-image: ${{ env.REPO_NAME }}-${{ github.ref_name }}:${{ github.sha }}
-    #         image: ${{ env.REPO_NAME }}-${{ github.ref_name }}:${{ github.sha }}, ${{ env.REPO_NAME }}-${{ github.ref_name }}:latest
+      - run: docker build --tag ${{ env.REPO_NAME }}-${{ github.ref_name }}:${{ github.sha }} .
+      - name: Push to ECR
+        id: ecr-commit
+        uses: jwalton/gh-ecr-push@v2
+        with:
+            access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            region: eu-central-1
+            local-image: ${{ env.REPO_NAME }}-${{ github.ref_name }}:${{ github.sha }}
+            image: ${{ env.REPO_NAME }}-${{ github.ref_name }}:${{ github.sha }}
+      
+      - name: Push to ECR
+        id: ecr-latest
+        uses: jwalton/gh-ecr-push@v2
+        with:
+            access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            region: eu-central-1
+            local-image: ${{ env.REPO_NAME }}-${{ github.ref_name }}:${{ github.sha }}
+            image: ${{ env.REPO_NAME }}-${{ github.ref_name }}:latest
