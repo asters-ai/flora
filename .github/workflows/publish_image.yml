@@ -34,23 +34,23 @@ jobs:
       - name: Build, tag, and push image to ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.REPO_NAME }}
+          REPOSITORY_NAME: ${{ env.REPO_NAME }}
           COMMIT_SHA: ${{ github.sha }}
           IMAGE_BRANCH: ${{ github.ref_name }}
         run: |
           # Build the Docker image
-          docker build -t $ECR_REPOSITORY:$COMMIT_SHA .
+          docker build -t $REPOSITORY_NAME:$COMMIT_SHA .
 
           # Tag the image with both the branch name and the Git SHA
-          docker tag $ECR_REPOSITORY:$COMMIT_SHA $ECR_REGISTRY/$ECR_REPOSITORY/$IMAGE_BRANCH:$COMMIT_SHA
-          docker tag $ECR_REPOSITORY:$COMMIT_SHA $ECR_REGISTRY/$ECR_REPOSITORY/$IMAGE_BRANCH:latest
+          docker tag $REPOSITORY_NAME:$COMMIT_SHA $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:$COMMIT_SHA
+          docker tag $REPOSITORY_NAME:$COMMIT_SHA $ECR_REGISTRY/$REPOSITORY_NAME-$IMAGE_BRANCH:latest
 
           # Push both tags (SHA and branch name) to ECR
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH/$COMMIT_SHA
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH/latest
+          docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/$COMMIT_SHA
+          docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/latest
 
       # Optionally, verify that the images have been pushed successfully
       - name: Verify pushed images
         run: |
-          echo "Image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH/$COMMIT_SHA has been pushed to ECR"
-          echo "Image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH/latest has been pushed to ECR"
+          echo "Image $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/$COMMIT_SHA has been pushed to ECR"
+          echo "Image $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_BRANCH/latest has been pushed to ECR"
