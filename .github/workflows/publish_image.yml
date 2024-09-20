@@ -1,0 +1,56 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    branches:
+      - main  # You can adjust this to match your target branches
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up AWS credentials from GitHub secrets
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      # Log in to Amazon ECR
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+          # Extract GitHub repository name (use repo_name for ECR)
+      - name: Extract repository name
+        run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
+      # Build, tag, and push image to ECR
+      - name: Build, tag, and push image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.REPO_NAME }}
+          IMAGE_SHA_TAG: ${{ github.sha }}
+          IMAGE_BRANCH_TAG: ${{ github.ref_name }}
+        run: |
+          # Build the Docker image
+          docker build -t $ECR_REPOSITORY:$IMAGE_SHA_TAG .
+
+          # Tag the image with both the branch name and the Git SHA
+          docker tag $ECR_REPOSITORY:$IMAGE_SHA_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH_TAG/$IMAGE_SHA_TAG
+          docker tag $ECR_REPOSITORY:$IMAGE_SHA_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH_TAG/latest
+
+          # Push both tags (SHA and branch name) to ECR
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH_TAG/$IMAGE_SHA_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH_TAG/latest
+
+      # Optionally, verify that the images have been pushed successfully
+      - name: Verify pushed images
+        run: |
+          echo "Image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH_TAG/$IMAGE_SHA_TAG has been pushed to ECR"
+          echo "Image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_BRANCH_TAG/latest has been pushed to ECR"
