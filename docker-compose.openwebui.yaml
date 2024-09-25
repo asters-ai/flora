@@ -9,7 +9,12 @@ services:
   #   image: ollama/ollama:${OLLAMA_DOCKER_TAG-latest}
 
   open-webui:
-    image: 923478127586.dkr.ecr.eu-central-1.amazonaws.com/flora-main:latest
+    build:
+      context: .
+      args:
+        OLLAMA_BASE_URL: '/ollama'
+      dockerfile: Dockerfile
+    image: ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}
     container_name: open-webui
     volumes:
       - open-webui:/app/backend/data
