@@ -154,7 +154,9 @@ log.setLevel(SRC_LOG_LEVELS["MAIN"])
 class SPAStaticFiles(StaticFiles):
     async def get_response(self, path: str, scope):
         try:
-            return await super().get_response(path, scope)
+            response = await super().get_response(path, scope)
+            response.headers['Content-Security-Policy'] = 'frame-ancestors self https://*.asters.ai'
+            return response
         except (HTTPException, StarletteHTTPException) as ex:
             if ex.status_code == 404:
                 return await super().get_response("index.html", scope)
