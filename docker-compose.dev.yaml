@@ -69,11 +69,6 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_PASSWORD: password!
 
-  adminer:
-    image: adminer
-    ports:
-      - 3001:8080
-
 volumes:
   flora-pg: {}
   data: {}
