@@ -20,7 +20,7 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
     ports:
-      - "3000:5173"
+      - "5173:5173"
     develop:
       watch:
         - action: sync
@@ -40,7 +40,9 @@ services:
     environment:
      - ENV=dev
      - WEBUI_AUTH=False
+     - WEBUI_SECRET_KEY="development"
      - DATABASE_URL=postgresql://postgres:password!@db:5432/postgres
+     - GLOBAL_LOG_LEVEL=DEBUG
     volumes:
       - data:/app/backend/data
     extra_hosts:
